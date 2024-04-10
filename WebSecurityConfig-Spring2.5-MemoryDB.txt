@@ -1,0 +1,34 @@
+@Configuration
+@EnableWebSecurity
+//WebSecurityConfigurerAdapter depricated in Springboot 2.7
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+	//User authentication
+	@Override
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication()
+                    .withUser("javainuse")
+		    .password("javainuse")
+                    .roles("USER");
+	}
+	
+       //Authorization
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		http.csrf().disable();
+		http.antMatcher("/**")
+		    .authorizeRequests()
+                    .anyRequest()
+                    .hasRole("USER")
+		    .and()
+                    .formLogin()
+                    .loginPage("/login.jsp")
+		    .failureUrl("/login.jsp?error=1").loginProcessingUrl("/login")
+		    .permitAll()
+                    .and()
+                    .logout()
+		    .logoutSuccessUrl("/listEmployees.html");
+
+	}
+
+}
